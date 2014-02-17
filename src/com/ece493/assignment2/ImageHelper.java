@@ -6,7 +6,7 @@ import android.graphics.Bitmap.Config;
 
 public class ImageHelper
 {
-	public static Integer MAX_FILTER_SIZE = 50;
+	public static Integer MAX_FILTER_SIZE = 600;
 
 	/**
 	 * Creates a 2d array of pixels from a bitmap

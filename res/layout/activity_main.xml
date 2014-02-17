@@ -16,6 +16,7 @@
             android:id="@+id/imageView1"
             android:layout_width="fill_parent"
             android:layout_height="fill_parent"
+            android:adjustViewBounds="false"
             android:scaleType="fitStart" />
     </LinearLayout>
 
@@ -34,7 +35,7 @@
             android:layout_height="fill_parent"
             android:layout_weight="1.0"
             android:onClick="buttonLoadImage"
-            android:text="button_load_image" />
+            android:text="Load Image" />
 
         <Button
             android:id="@+id/button2"
@@ -42,8 +43,8 @@
             android:layout_width="0.0dip"
             android:layout_height="fill_parent"
             android:layout_weight="1.0"
-            android:onClick="buttonProcessImage"
-            android:text="button_proc_image" />
+            android:onClick="buttonTakePicture"
+            android:text="Take Picture" />
     </LinearLayout>
 
 </LinearLayout>
