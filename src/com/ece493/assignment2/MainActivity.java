@@ -50,7 +50,6 @@ public class MainActivity extends Activity implements GestureDetector.OnGestureL
 		setContentView(R.layout.activity_main);
 		mDetector = new GestureDetectorCompat(this, this);
 		backUp = new Stack<Bitmap>();
-		backUp.setSize(backupCount);
 
 		mGestureDetector = new GestureDetectorCompat(this, new SimpleOnGestureListener() {
 			@Override
@@ -78,9 +77,7 @@ public class MainActivity extends Activity implements GestureDetector.OnGestureL
 				if (mGestureDetector.onTouchEvent(event)) {
 					return true;
 				}
-				System.out.println(event.getAction());
 				if(event.getAction() == MotionEvent.ACTION_UP) {
-					System.out.println("SCROLLING");
 					if(mIsScrolling ) {
 						mIsScrolling  = false;
 						if(Math.abs(startY - y) > Math.abs(startX - x))
@@ -108,7 +105,7 @@ public class MainActivity extends Activity implements GestureDetector.OnGestureL
 	public boolean onCreateOptionsMenu(Menu menu) 
 	{
 		MenuItem buttonSettings = menu.add("Save");  
-		buttonSettings = menu.add("test");
+		buttonSettings = menu.add("Backup Count");
 		buttonSettings.setShowAsAction(MenuItem.SHOW_AS_ACTION_NEVER);
 		buttonSettings.setOnMenuItemClickListener(new MenuItem.OnMenuItemClickListener() 
 		{
@@ -119,7 +116,7 @@ public class MainActivity extends Activity implements GestureDetector.OnGestureL
 				{
 					savePopup();
 				}
-				if(item.getTitle().equals("test"))
+				if(item.getTitle().equals("Backup Count"))
 				{
 					backupCountPopup();
 				}
@@ -152,6 +149,7 @@ public class MainActivity extends Activity implements GestureDetector.OnGestureL
 			}
 		}
 	}
+	
 	public void buttonTakePicture(View v)
 	{
 		if(ImageChanged)
@@ -227,7 +225,7 @@ public class MainActivity extends Activity implements GestureDetector.OnGestureL
 
 	@Override
 	public void onBackPressed() {
-		if(this.backUp.peek() == null)
+		if(backUp.isEmpty())
 		{
 			if(this.getBitmapFromImageView()!=null)
 			{
@@ -314,7 +312,6 @@ public class MainActivity extends Activity implements GestureDetector.OnGestureL
 	public boolean onScroll(MotionEvent e1, MotionEvent e2, float distanceX,
 			float distanceY)
 	{
-		System.out.println("SCROLLING");
 		if(mIsScrolling == false)
 		{
 			startX = distanceX;
@@ -342,6 +339,7 @@ public class MainActivity extends Activity implements GestureDetector.OnGestureL
 	}
 
 	// Private Methods
+	
 	private Point scaleXY(MotionEvent e)
 	{
 		ImageView view = (ImageView)findViewById(R.id.imageView1);
@@ -399,7 +397,9 @@ public class MainActivity extends Activity implements GestureDetector.OnGestureL
 				backupCount = Integer.parseInt(input.getText().toString());
 			}
 		});
-	
+		
+		AlertDialog dialog = builder.create();
+		dialog.show();
 	}
 
 	private void setImage(Bitmap bitmap)
@@ -421,8 +421,6 @@ public class MainActivity extends Activity implements GestureDetector.OnGestureL
 			bitmapDrawable.getBitmap().recycle();
 		}
 		backUp = new Stack<Bitmap>();
-		backUp.setSize(backupCount);
-
 	}
 
 	@SuppressWarnings("deprecation")
@@ -445,6 +443,9 @@ public class MainActivity extends Activity implements GestureDetector.OnGestureL
 		@Override
 		protected void onPreExecute() 
 		{
+			while (backUp.size() >= backupCount) {
+				backUp.remove(0);
+	        }
 			backUp.push(getBitmapFromImageView().copy(Bitmap.Config.ARGB_8888,false));
 			dialog = ProgressDialog.show(MainActivity.this, "",
 					"Loading...", false);
@@ -463,7 +464,6 @@ public class MainActivity extends Activity implements GestureDetector.OnGestureL
 		@Override
 		protected Bitmap doInBackground(ImageWarp... params)
 		{
-			System.out.println("cloning image");
 			params[0].execute();
 			return params[0].getImage();
 		}
